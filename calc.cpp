@@ -1,11 +1,11 @@
-#include <iostream>
+п»ї#include <iostream>
 #include <string>
 
 using namespace std;
 
-float Сalculate(string &Data, string &Chars, int count);//сам подчёт с учётом '*' и '/'
-string correct(string Data);//убирает лишние пробелы и знак '=' в конце
-int Sort(string &Data, string &Chars);//модуль для отделения знаков и чисел
+float РЎalculate(string &Data, string &Chars, int count);//СЃР°Рј РїРѕРґС‡С‘С‚ СЃ СѓС‡С‘С‚РѕРј '*' Рё '/'
+string correct(string Data);//СѓР±РёСЂР°РµС‚ Р»РёС€РЅРёРµ РїСЂРѕР±РµР»С‹ Рё Р·РЅР°Рє '=' РІ РєРѕРЅС†Рµ
+int Sort(string &Data, string &Chars);//РјРѕРґСѓР»СЊ РґР»СЏ РѕС‚РґРµР»РµРЅРёСЏ Р·РЅР°РєРѕРІ Рё С‡РёСЃРµР»
 
 
 string correct(string Data)
@@ -105,7 +105,7 @@ string Find_next_elem(string &Data, int pos)
 	return element;
 }
 
-int Find_curr_pos(const string Data, const string Chars, int elem)//возвращает позицию в Data
+int Find_curr_pos(const string Data, const string Chars, int elem)//РІРѕР·РІСЂР°С‰Р°РµС‚ РїРѕР·РёС†РёСЋ РІ Data
 {
 	int pos = 0, counter = 0;
 
@@ -127,7 +127,7 @@ int Find_curr_pos(const string Data, const string Chars, int elem)//возвращает п
 
 
 
-float Operation(int elem, string &Data, string &Chars)//для обработки двух чисел
+float Operation(int elem, string &Data, string &Chars)//РґР»СЏ РѕР±СЂР°Р±РѕС‚РєРё РґРІСѓС… С‡РёСЃРµР»
 {
 	int pos = Find_curr_pos(Data, Chars, elem);
 	float res = 0;
@@ -137,7 +137,7 @@ float Operation(int elem, string &Data, string &Chars)//для обработки двух чисел
 	{
 		cout << "error";
 	}
-	//менять местами а и b запрещено !!!
+	//РјРµРЅСЏС‚СЊ РјРµСЃС‚Р°РјРё Р° Рё b Р·Р°РїСЂРµС‰РµРЅРѕ !!!
 	b = Find_next_elem(Data, pos);
 	a = Find_prev_elem(Data, pos);
 	
@@ -172,7 +172,7 @@ float Operation(int elem, string &Data, string &Chars)//для обработки двух чисел
 }
 
 
-float Сalculate(string & Data, string & Chars, int count)//модуль для поиска операций по приоритету
+float РЎalculate(string & Data, string & Chars, int count)//РјРѕРґСѓР»СЊ РґР»СЏ РїРѕРёСЃРєР° РѕРїРµСЂР°С†РёР№ РїРѕ РїСЂРёРѕСЂРёС‚РµС‚Сѓ
 {
 	int i = 0, j = 0;
 	float result = 0;
@@ -220,7 +220,7 @@ int main()
 	Sort(Data, Chars);
 	while (1 != Capacity(Data))
 	{
-		Сalculate(Data, Chars, i);
+		РЎalculate(Data, Chars, i);
 	}
 	cout << Data;
 	system("pause"); 
