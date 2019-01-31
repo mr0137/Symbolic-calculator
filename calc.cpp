@@ -1,18 +1,20 @@
 ﻿#include <iostream>
 #include <string>
 
+#pragma warning (disable : 4244 4018)
+
 using namespace std;
 
 
 string correct(string Data);										/*	
 																		Убирает лишние пробелы и знак '=' в конце.		
 																	*/
-string Find_prev_elem(string &Data, int &pos);						/* 
+string Find_prev_elem(string &Data, int &pos, string &Chars, int elem);/*
 																		Находит операнд перед знаком операции основываясь
 																		на позиции самого знака. После "чистит" в "нужном
 																		месте" данные в строке Data.
 																	*/
-string Find_next_elem(string &Data, int pos);						/*
+string Find_next_elem(string &Data, int pos, string &Chars, int elem);/*
 																		Работает аналогично _prev_.
 																		Фунции должны вызываться одна за другой в конкретном
 																		порядке:
@@ -57,6 +59,11 @@ bool bkt_check(string Data);										/*
 																		операндами.
 																	*/
 
+void Bugs(string &Data);											/*
+																		Костыль : убирает баг, когда в ходе решения встречаются
+																		такие моменты, как : "++" "+-" и т.д.
+																	*/
+
 string correct(string Data)
 {
 	int i = 0;
@@ -74,6 +81,14 @@ string correct(string Data)
 		}
 	}
 
+	for (i = 0; i < Data.length(); i++)
+	{
+		if ((int)Data[i] >= 65 && (int)Data[i] <= 90)
+		{
+			Data[i] = (char)((int)Data[i] + 32);
+		}
+	}
+
 	if (Data[Data.length() - 1] == '=')
 	{
 		Data.resize(Data.length() - 1);
@@ -81,6 +96,36 @@ string correct(string Data)
 
 	cout << Data << endl;
 
+	//вторая проверка для упрощения работы
+	for (i = 0; i < Data.length(); i++)
+	{
+		if ((Data[i] == (char)'s') and (Data[i + 1] == (char)'i') and (Data[i + 2] == (char)'n'))
+		{
+			Data.erase(i, 3);
+			Data.insert(i, "s");
+		}
+		else if ((Data[i] == (char)'c') and (Data[i + 1] == (char)'o') and (Data[i + 2] == (char)'s'))
+		{
+			Data.erase(i, 3);
+			Data.insert(i, "c");
+		}
+		else if ((Data[i] == (char)'t') and (Data[i + 1] == (char)'g'))
+		{
+			Data.erase(i, 2);
+			Data.insert(i, "t");
+		}
+		else if ((Data[i] == (char)'c') and (Data[i + 1] == (char)'t') and (Data[i + 2] == (char)'g'))
+		{
+			Data.erase(i, 3);
+			Data.insert(i, "g");
+		}
+		else if ((Data[i] == (char)'s') and (Data[i + 1] == (char)'q') and (Data[i + 2] == (char)'e') and (Data[i + 3] == (char)'t'))
+		{
+			Data.erase(i, 4);
+			Data.insert(i, "~");
+		}
+	}
+	
 	Data.insert(0, " ");
 	Data.insert(Data.length(), " ");
 
@@ -109,7 +154,10 @@ int Sort(string &Data, string &Chars)
 	while (Data.length() > i)
 	{
 		if (Data[i] == '+' or Data[i] == '-' or
-			Data[i] == '/' or Data[i] == '*' )
+			Data[i] == '/' or Data[i] == '*' or
+			Data[i] == '~' or Data[i] == '^' or 
+			Data[i] == 's' or Data[i] == 'c' or
+			Data[i] == 't' or Data[i] == 'g')
 		{
 			Chars = Chars + (char)Data[i];
 			Data[i] = ' ';
@@ -122,7 +170,7 @@ int Sort(string &Data, string &Chars)
 	return count;
 }
 
-string Find_prev_elem(string &Data, int &pos)
+string Find_prev_elem(string &Data, int &pos, string &Chars, int elem)
 {
 	string element;
 	int i = pos - 1, counter = 0;
@@ -139,10 +187,16 @@ string Find_prev_elem(string &Data, int &pos)
 	return element;
 }
 
-string Find_next_elem(string &Data, int pos)
+string Find_next_elem(string &Data, int pos, string &Chars, int elem)
 {
 	string element;
+	string a = "\0";
 	int i = pos + 1, counter = 1;
+
+	if (Data[i] == ' ')
+	{
+		i++;
+	}
 
 	while (Data[i] != ' ')
 	{
@@ -150,7 +204,16 @@ string Find_next_elem(string &Data, int pos)
 	}
 	counter = fabs(pos - i);
 
-	element = Data.substr(pos + 1, counter);
+	if (Data[pos+1] == ' ')
+	{
+		Data.erase(pos, 1);
+		a = Chars[elem + 1];
+		Chars.erase(elem + 1, 1);
+		counter--;
+		//Data.insert(0, a);
+	}
+
+	element = a + Data.substr(pos + 1, counter);
 	Data.erase(pos + 1, counter);
 
 	return element;
@@ -176,6 +239,60 @@ int Find_curr_pos(const string Data, const string Chars, int elem)
 	return -1;
 }
 
+void Bugs(string &Data)
+{
+	int i = 0;
+
+	while (Data[i] != NULL)
+	{
+		if (Data[i] == '+')
+		{
+			if (Data[i + 1] == '-')
+			{
+				Data.erase(i, 1);
+				i = 0;
+			}
+			else if (Data[i + 1] == '+')
+			{
+				Data.erase(i + 1, 1);
+				i = 0;
+			}
+		}
+		else if (Data[i] == '-')
+		{
+			if (Data[i + 1] == '-')
+			{
+				Data.erase(i, 2);
+				Data.insert(i, "+");
+				i = 0;
+			}
+			else if (Data[i + 1] == '+')
+			{
+				Data.erase(i + 1, 1);
+				i = 0;
+			}
+		}
+		else if (Data[i] == '*')
+		{
+			if (Data[i + 1] == '+')
+			{
+				Data.erase(i + 1, 1);
+				i = 0;
+			}
+			
+		}
+		else if (Data[i] == '/')
+		{
+			if (Data[i + 1] == '+')
+			{
+				Data.erase(i + 1, 1);
+				i = 0;
+			}
+		}
+		i++;
+	}
+}
+
 float Operation(int elem, string &Data, string &Chars)
 {
 	int pos = Find_curr_pos(Data, Chars, elem);
@@ -187,8 +304,8 @@ float Operation(int elem, string &Data, string &Chars)
 		cout << "error";
 	}
 	//менять местами а и b запрещено !!!
-	b = Find_next_elem(Data, pos);
-	a = Find_prev_elem(Data, pos);
+	b = Find_next_elem(Data, pos, Chars, elem);
+	a = Find_prev_elem(Data, pos, Chars, elem);
 	
 	switch ((int)Chars[elem])
 	{
@@ -202,7 +319,14 @@ float Operation(int elem, string &Data, string &Chars)
 		break;
 	case 45:	
 		// "-"
-		res = atof(a.c_str()) - atof(b.c_str());
+		if (a[0] != ' ')
+		{
+			res = atof(a.c_str()) - atof(b.c_str());
+		}
+		else
+		{
+			res = -1 * atof(b.c_str());
+		}
 		break;
 	case 47:	
 		// "/"
@@ -224,6 +348,8 @@ float Сalculate(string & Data, string & Chars, int count)
 {
 	int i = 0, j = 0;
 	float result = 0;
+
+	//if (Chars.find('s') != -1 or Chars.find('c') != -1 or Chars.find('t') != -1 or Chars.find('g') != -1)
 
 	if (Chars.find('*') != -1 or Chars.find('/') != -1)
 	{
@@ -261,7 +387,10 @@ int BKT(string &Data, string Chars)
 {
 	int i = Data.find('(') + 1;
 	int counter = 0, bkt_counter = 1, temp = 0;
-	string bkt_Data = Data;
+	string bkt_Data;
+
+	Bugs(Data);
+	bkt_Data = Data;
 
 	if (i != 0)
 	{
@@ -356,11 +485,11 @@ void Start(string &Data, string &Chars)
 
 int main()
 {
-	string Data = "(144/(12*14) + 11/2) * 44 * ( 3 )=", Chars;
+	string Data = "-(-144.12/-(12.112*-14) + 11.64235/2) * -60 * -(-3 )=", Chars;
 	int i = 1;
 	float res = 0.0;
 
-//	getline(cin, Data);
+	getline(cin, Data);
 	Data = correct(Data);
 	if (!bkt_check(Data))
 	{
