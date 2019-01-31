@@ -4,59 +4,54 @@
 using namespace std;
 
 
-string correct(string Data);										/*	
-																		Убирает лишние пробелы и знак '=' в конце.		
-																	*/
-string Find_prev_elem(string &Data, int &pos);						/* 
-																		Находит операнд перед знаком операции основываясь
-																		на позиции самого знака. После "чистит" в "нужном
-																		месте" данные в строке Data.
-																	*/
-string Find_next_elem(string &Data, int pos);						/*
-																		Работает аналогично _prev_.
-																		Фунции должны вызываться одна за другой в конкретном
-																		порядке:
-																			1. next;
-																			2. prev;
-																		При вызове в обратном порядке позиция для чистки next
-																		будет не верной.
-																	*/
+string correct(string Data);							/*	
+											Убирает лишние пробелы и знак '=' в конце.		
+										*/
+string Find_prev_elem(string &Data, int &pos);					/* 
+											Находит операнд перед знаком операции основываясь
+											на позиции самого знака. После "чистит" в "нужном
+											месте" данные в строке Data.
+										*/
+string Find_next_elem(string &Data, int pos);					/*
+											Работает аналогично _prev_.
+											Фунции должны вызываться одна за другой в конкретном
+											порядке:
+												1. next;
+												2. prev;
+											При вызове в обратном порядке позиция для чистки next
+											Будет не верной.
+										*/
 float Operation(int elem, string &Data, string &Chars);				/*
-																		Функция для выполнения операций над соседними
-																		операндами.
-																	*/
+											Функция для выполнения операций над соседними
+											операндами.
+										*/
 float Сalculate(string &Data, string &Chars, int count);			/*
-																		Подсчёт с учётом приоритетов операций.
-																	*/
-
-int Sort(string &Data, string &Chars);								/*	
-																		Функция для отделения знаков операций и чисел.
-																	*/
-int Capacity(const string Data);									/*
-																		Выдаёт количество операндов основываясь на пробелах.
-																	*/
-int Find_curr_pos(const string Data, const string Chars, int elem); /*
-																		Возвращает позицию знака конкретной операции в строке 
-																		Data.
-																    */
-int BKT(string &Data, string Chars);								/*
-																		Функция выполняющая расстановку приоритетов по
-																		средству поиска символов "(" и ")".
-																		Выполняет рекурсивные действия.
-																		До конца не оптимизирована(иногда "накидывает" пару
-																		лишних уровней рекурсии).
-																	*/
-
-void Start(string &Data, string &Chars);							/*
-																		Функция для вызова Sort и Calculate.
-																	*/
-
-
-bool bkt_check(string Data);										/*
-																		Функция для выполнения операций над соседними
-																		операндами.
-																	*/
-
+											Подсчёт с учётом приоритетов операций.
+										*/
+int Sort(string &Data, string &Chars);						/*	
+											Функция для отделения знаков операций и чисел.
+										*/
+int Capacity(const string Data);						/*
+											Выдаёт количество операндов основываясь на пробелах.
+										*/
+int Find_curr_pos(const string Data, const string Chars, int elem); 		/*
+											Возвращает позицию знака конкретной операции в строке 
+											Data.
+										*/
+int BKT(string &Data, string Chars);						/*
+											Функция выполняющая расстановку приоритетов по
+											средству поиска символов "(" и ")".
+											Выполняет рекурсивные действия.
+											До конца не оптимизирована(иногда "накидывает" пару
+											лишних уровней рекурсии).
+										*/
+void Start(string &Data, string &Chars);					/*
+											Функция для вызова Sort и Calculate.
+										*/
+bool bkt_check(string Data);							/*
+											Функция для выполнения операций над соседними
+											операндами.
+										*/
 string correct(string Data)
 {
 	int i = 0;
@@ -377,5 +372,3 @@ int main()
 	system("pause"); 
 	return 0;
 }
-
-
