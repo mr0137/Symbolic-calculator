@@ -289,6 +289,7 @@ void Bugs(string &Data)
 				i = 0;
 			}
 		}
+
 		i++;
 	}
 }
