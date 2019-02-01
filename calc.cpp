@@ -2,6 +2,7 @@
 #include <string>
 
 #pragma warning (disable : 4244 4018)
+#define PI 3.14159265
 
 using namespace std;
 
@@ -23,11 +24,11 @@ string Find_next_elem(string &Data, int pos, string &Chars, int elem);/*
 																		При вызове в обратном порядке позиция для чистки next
 																		будет не верной.
 																	*/
-float Operation(int elem, string &Data, string &Chars);				/*
+float Operation(int elem, string &Data, string &Chars, bool Deg);				/*
 																		Функция для выполнения операций над соседними
 																		операндами.
 																	*/
-float Сalculate(string &Data, string &Chars, int count);			/*
+float Сalculate(string &Data, string &Chars, int count, bool Deg);			/*
 																		Подсчёт с учётом приоритетов операций.
 																	*/
 
@@ -41,7 +42,7 @@ int Find_curr_pos(const string Data, const string Chars, int elem); /*
 																		Возвращает позицию знака конкретной операции в строке 
 																		Data.
 																    */
-int BKT(string &Data, string Chars);								/*
+int BKT(string &Data, string Chars, bool Deg);						/*
 																		Функция выполняющая расстановку приоритетов по
 																		средству поиска символов "(" и ")".
 																		Выполняет рекурсивные действия.
@@ -49,7 +50,7 @@ int BKT(string &Data, string Chars);								/*
 																		лишних уровней рекурсии).
 																	*/
 
-void Start(string &Data, string &Chars);							/*
+void Start(string &Data, string &Chars, bool Deg);							/*
 																		Функция для вызова Sort и Calculate.
 																	*/
 
@@ -297,7 +298,7 @@ void Bugs(string &Data)
 	}
 }
 
-float Operation(int elem, string &Data, string &Chars)
+float Operation(int elem, string &Data, string &Chars, bool Deg)
 {
 	int pos = Find_curr_pos(Data, Chars, elem);
 	float res = 0;
@@ -337,16 +338,45 @@ float Operation(int elem, string &Data, string &Chars)
 		res = atof(a.c_str()) / atof(b.c_str());
 		break;
 	case 115://sin
-		res = sin(atof(b.c_str()));
+		if (!Deg)
+		{
+			res = sin(atof(b.c_str()));
+		}
+		else
+		{
+			res = sin(atof(b.c_str()) * PI/180);
+		}
 		break;
 	case 99://cos
-		res = cos(atof(b.c_str()));
+		if (!Deg)
+		{
+			res = cos(atof(b.c_str()));
+		}
+		else
+		{
+			res = cos(atof(b.c_str()) * PI / 180);
+		}
 		break;
 	case 116://tg
-		res = sin(atof(b.c_str())) / cos(atof(b.c_str()));
+		if (!Deg)
+		{
+			res = sin(atof(b.c_str())) / cos(atof(b.c_str()));
+		}
+		else
+		{
+			res = sin(atof(b.c_str()) * PI / 180) / cos(atof(b.c_str()) * PI / 180);
+		}
+		
 		break;
 	case 103://ctg
-		res = cos(atof(b.c_str())) / sin(atof(b.c_str()));
+		if (!Deg)
+		{
+			res = cos(atof(b.c_str()) * PI / 180) / sin(atof(b.c_str()) * PI / 180);
+		}
+		else
+		{
+			res = cos(atof(b.c_str())) / sin(atof(b.c_str()));
+		}
 		break;
 	case 94:// ^
 		res = pow(atof(a.c_str()),atof(b.c_str()));
@@ -401,7 +431,7 @@ int Find_Chars(string Chars)
 	return pos;
 }
 
-float Сalculate(string & Data, string & Chars, int count)
+float Сalculate(string & Data, string & Chars, int count, bool Deg)
 {
 	int i = 0, j = 0, k = 0;
 	float result = 0;
@@ -411,7 +441,7 @@ float Сalculate(string & Data, string & Chars, int count)
 		Chars.find('v') != -1 or Chars.find('^') != -1)
 	{
 		i = Find_Chars(Chars);
-		Operation(i, Data, Chars);
+		Operation(i, Data, Chars, Deg);
 
 	}
 	else if (Chars.find('*') != -1 or Chars.find('/') != -1)
@@ -423,31 +453,31 @@ float Сalculate(string & Data, string & Chars, int count)
 		{
 			if (i < j)
 			{
-				Operation(i, Data, Chars);
+				Operation(i, Data, Chars, Deg);
 			}
 			else
 			{
-				Operation(j, Data, Chars);
+				Operation(j, Data, Chars, Deg);
 			}
 		}
 		else if (j != -1)
 		{
-			Operation(j, Data, Chars);
+			Operation(j, Data, Chars, Deg);
 		}
 		else
 		{
-			Operation(i, Data, Chars);
+			Operation(i, Data, Chars, Deg);
 		}
 	}
 	else
 	{
-		Operation(0, Data, Chars);
+		Operation(0, Data, Chars, Deg);
 	}
 
 	return result;
 }
 
-int BKT(string &Data, string Chars)
+int BKT(string &Data, string Chars, bool Deg)
 {
 	int i = Data.find('(') + 1;
 	int counter = 0, bkt_counter = 1, temp = 0;
@@ -483,11 +513,11 @@ int BKT(string &Data, string Chars)
 		temp = bkt_Data.length();
 		bkt_Data.insert(temp, " ");
 
-		BKT(bkt_Data, Chars);
+		BKT(bkt_Data, Chars, Deg);
 	}
 	else
 	{
-		Start(bkt_Data, Chars);
+		Start(bkt_Data, Chars, Deg);
 	}
 
 	if (i != 0)
@@ -496,7 +526,7 @@ int BKT(string &Data, string Chars)
 		bkt_Data.erase(bkt_Data.length() - 1, 1);
 		Data.erase(i - 1, counter + 2);
 		Data.insert(i - 1, bkt_Data);
-		BKT(Data, Chars);
+		BKT(Data, Chars, Deg);
 	}
 	else
 	{
@@ -533,7 +563,7 @@ bool bkt_check(string Data)
 
 }
 
-void Start(string &Data, string &Chars)
+void Start(string &Data, string &Chars, bool Deg)
 {
 	int i = 0;
 
@@ -541,7 +571,7 @@ void Start(string &Data, string &Chars)
 	{
 		while (1 != Capacity(Data))
 		{
-			Сalculate(Data, Chars, i);
+			Сalculate(Data, Chars, i, Deg);
 		}
 	}
 	
@@ -549,9 +579,10 @@ void Start(string &Data, string &Chars)
 //"-(-144.12/-(12.112*-14) + 11.64235/2) * -60 * -(-3 )="
 int main()
 {
-	string Data = "sin50^3 * (sin2)^3 * cos4+ sqrt(2) * (tg40) + (ctg40)=", Chars;
+	string Data = "sin(sin(cos(60)))=", Chars;
 	int i = 1;
 	float res = 0.0;
+	bool Deg = true;
 
 	//getline(cin, Data);
 	Data = correct(Data);
@@ -563,7 +594,7 @@ int main()
 	}
 	while (i != 0)
 	{
-		 i = BKT(Data, Chars);
+		 i = BKT(Data, Chars, Deg);
 	}
 	
 	cout << Data;
