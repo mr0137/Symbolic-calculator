@@ -63,6 +63,10 @@ void Bugs(string &Data);											/*
 																		Костыль : убирает баг, когда в ходе решения встречаются
 																		такие моменты, как : "++" "+-" и т.д.
 																	*/
+int Find_Chars(string Chars);										/*
+																		Для упрощения поиска приоритета для sin, cos, tg, ctg, 
+																		sqrt и ^
+																	*/
 
 string correct(string Data)
 {
@@ -119,10 +123,10 @@ string correct(string Data)
 			Data.erase(i, 3);
 			Data.insert(i, "g");
 		}
-		else if ((Data[i] == (char)'s') and (Data[i + 1] == (char)'q') and (Data[i + 2] == (char)'e') and (Data[i + 3] == (char)'t'))
+		else if ((Data[i] == (char)'s') and (Data[i + 1] == (char)'q') and (Data[i + 2] == (char)'r') and (Data[i + 3] == (char)'t'))
 		{
 			Data.erase(i, 4);
-			Data.insert(i, "~");
+			Data.insert(i, "v");
 		}
 	}
 	
@@ -155,7 +159,7 @@ int Sort(string &Data, string &Chars)
 	{
 		if (Data[i] == '+' or Data[i] == '-' or
 			Data[i] == '/' or Data[i] == '*' or
-			Data[i] == '~' or Data[i] == '^' or 
+			Data[i] == 'v' or Data[i] == '^' or 
 			Data[i] == 's' or Data[i] == 'c' or
 			Data[i] == 't' or Data[i] == 'g')
 		{
@@ -204,13 +208,12 @@ string Find_next_elem(string &Data, int pos, string &Chars, int elem)
 	}
 	counter = fabs(pos - i);
 
-	if (Data[pos+1] == ' ')
+	if (Data[pos + 1] == ' ')
 	{
 		Data.erase(pos, 1);
 		a = Chars[elem + 1];
 		Chars.erase(elem + 1, 1);
 		counter--;
-		//Data.insert(0, a);
 	}
 
 	element = a + Data.substr(pos + 1, counter);
@@ -320,18 +323,36 @@ float Operation(int elem, string &Data, string &Chars)
 		break;
 	case 45:	
 		// "-"
-		if (a[0] != ' ')
-		{
+		/*if (a[0] != ' ')
+		{*/
 			res = atof(a.c_str()) - atof(b.c_str());
-		}
+		/*}
 		else
 		{
 			res = -1 * atof(b.c_str());
-		}
+		}*/
 		break;
 	case 47:	
 		// "/"
 		res = atof(a.c_str()) / atof(b.c_str());
+		break;
+	case 115://sin
+		res = sin(atof(b.c_str()));
+		break;
+	case 99://cos
+		res = cos(atof(b.c_str()));
+		break;
+	case 116://tg
+		res = sin(atof(b.c_str())) / cos(atof(b.c_str()));
+		break;
+	case 103://ctg
+		res = cos(atof(b.c_str())) / sin(atof(b.c_str()));
+		break;
+	case 94:// ^
+		res = pow(atof(a.c_str()),atof(b.c_str()));
+		break;
+	case 118:// sqrt
+		res = pow(atof(b.c_str()),0.5);
 		break;
 	default:
 		break;
@@ -345,17 +366,59 @@ float Operation(int elem, string &Data, string &Chars)
 	return res;
 }
 
+int Find_Chars(string Chars)
+{
+	int pos = 0, i = 0, j = 0, temp;
+	int s = 0, c = 0, g = 0, t = 0, v = 0;
+	int mass[6];
+	mass[0] = (int)Chars.find('s');
+	mass[1] = (int)Chars.find('c');
+	mass[2] = (int)Chars.find('t');
+	mass[3] = (int)Chars.find('g');
+	mass[4] = (int)Chars.find('v');
+	mass[5] = (int)Chars.find('^');
+
+	for (i = 0; i < 5 ; i++) 
+	{
+		for (j = 0; j < 5 - i; j++) 
+		{
+				temp = mass[j];
+				mass[j] = mass[j + 1];
+				mass[j + 1] = temp;
+		}
+	}
+
+	for (i = 0; i < 6; i++)
+	{
+		if (mass[i] != -1)
+		{
+			pos = mass[i];
+			break;
+		}
+	}
+
+
+	return pos;
+}
+
 float Сalculate(string & Data, string & Chars, int count)
 {
-	int i = 0, j = 0;
+	int i = 0, j = 0, k = 0;
 	float result = 0;
 
-	//if (Chars.find('s') != -1 or Chars.find('c') != -1 or Chars.find('t') != -1 or Chars.find('g') != -1)
+	if (Chars.find('s') != -1 or Chars.find('c') != -1 or
+		Chars.find('t') != -1 or Chars.find('g') != -1 or
+		Chars.find('v') != -1 or Chars.find('^') != -1)
+	{
+		i = Find_Chars(Chars);
+		Operation(i, Data, Chars);
 
-	if (Chars.find('*') != -1 or Chars.find('/') != -1)
+	}
+	else if (Chars.find('*') != -1 or Chars.find('/') != -1)
 	{
 		i = Chars.find('*');
 		j = Chars.find('/');
+
 		if (j != -1 and i != -1)
 		{
 			if (i < j)
@@ -483,14 +546,14 @@ void Start(string &Data, string &Chars)
 	}
 	
 }
-
+//"-(-144.12/-(12.112*-14) + 11.64235/2) * -60 * -(-3 )="
 int main()
 {
-	string Data = "-(-144.12/-(12.112*-14) + 11.64235/2) * -60 * -(-3 )=", Chars;
+	string Data = "sin50^3 * (sin2)^3 * cos4+ sqrt(2) * (tg40) + (ctg40)=", Chars;
 	int i = 1;
 	float res = 0.0;
 
-	getline(cin, Data);
+	//getline(cin, Data);
 	Data = correct(Data);
 	if (!bkt_check(Data))
 	{
