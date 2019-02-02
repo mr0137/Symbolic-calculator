@@ -501,7 +501,7 @@ float Сalculate(string & Data, string & Chars, int count, bool Deg)
 int BKT(string &Data, string Chars, bool Deg)
 {
 	int i = 0;
-	int counter = 0, bkt_counter = 0, temp = Data.find('l'), j = 1;
+	int counter = 0, bkt_counter = 0, temp = 0, j = 1;
 	string bkt_Data;
 	string log10;
 	float res;
@@ -509,7 +509,7 @@ int BKT(string &Data, string Chars, bool Deg)
 
 	Bugs(Data);
 	bkt_Data = Data;
-
+	temp = Data.find('l');
 
 
 	if (temp != -1)
@@ -540,6 +540,7 @@ int BKT(string &Data, string Chars, bool Deg)
 		}
 		i = 0;
 		bkt_Data.clear();
+		
 		while (1)
 		{
 			if (Data[temp + counter] == '(')
@@ -703,7 +704,7 @@ void Start(string &Data, string &Chars, bool Deg)
 //"-(-144.12/-(12.112*-14) + 11.64235/2) * -60 * -(-3 )="
 int main()
 {
-	string Data = "log(logexp) + (exp * pi)=", Chars;
+	string Data = "cos(sin(((-(-144.12/-(12.112*-14)+11.64235/2)*-60*-(-3)+log(log(exp))+(exp*pi)))/log12(pi)))=", Chars;
 	int i = 1;
 	float res = 0.0;
 	bool Deg = false;
