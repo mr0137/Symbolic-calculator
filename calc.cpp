@@ -2,7 +2,9 @@
 #include <string>
 
 #pragma warning (disable : 4244 4018)
-#define PI 3.14159265
+
+#define pi 3.14159265
+#define exp 2.71828183
 
 using namespace std;
 
@@ -129,6 +131,11 @@ string correct(string Data)
 			Data.erase(i, 4);
 			Data.insert(i, "v");
 		}
+		else if ((Data[i] == (char)'l') and (Data[i + 1] == (char)'o') and (Data[i + 2] == (char)'g'))
+		{
+			Data.erase(i, 3);
+			Data.insert(i, "l");
+		}
 	}
 	
 	Data.insert(0, " ");
@@ -162,7 +169,8 @@ int Sort(string &Data, string &Chars)
 			Data[i] == '/' or Data[i] == '*' or
 			Data[i] == 'v' or Data[i] == '^' or 
 			Data[i] == 's' or Data[i] == 'c' or
-			Data[i] == 't' or Data[i] == 'g')
+			Data[i] == 't' or Data[i] == 'g' or
+			Data[i] == 'l')
 		{
 			Chars = Chars + (char)Data[i];
 			Data[i] = ' ';
@@ -344,7 +352,7 @@ float Operation(int elem, string &Data, string &Chars, bool Deg)
 		}
 		else
 		{
-			res = sin(atof(b.c_str()) * PI/180);
+			res = sin(atof(b.c_str()) * pi / 180);
 		}
 		break;
 	case 99://cos
@@ -354,7 +362,7 @@ float Operation(int elem, string &Data, string &Chars, bool Deg)
 		}
 		else
 		{
-			res = cos(atof(b.c_str()) * PI / 180);
+			res = cos(atof(b.c_str()) * pi / 180);
 		}
 		break;
 	case 116://tg
@@ -364,18 +372,18 @@ float Operation(int elem, string &Data, string &Chars, bool Deg)
 		}
 		else
 		{
-			res = sin(atof(b.c_str()) * PI / 180) / cos(atof(b.c_str()) * PI / 180);
+			res = sin(atof(b.c_str()) * pi / 180) / cos(atof(b.c_str()) * pi / 180);
 		}
 		
 		break;
 	case 103://ctg
 		if (!Deg)
 		{
-			res = cos(atof(b.c_str()) * PI / 180) / sin(atof(b.c_str()) * PI / 180);
+			res = cos(atof(b.c_str()) ) / sin(atof(b.c_str()) );
 		}
 		else
 		{
-			res = cos(atof(b.c_str())) / sin(atof(b.c_str()));
+			res = cos(atof(b.c_str()) * pi / 180) / sin(atof(b.c_str()) * pi / 180);
 		}
 		break;
 	case 94:// ^
@@ -479,11 +487,81 @@ float Сalculate(string & Data, string & Chars, int count, bool Deg)
 
 int BKT(string &Data, string Chars, bool Deg)
 {
-	int i = Data.find('(') + 1;
-	int counter = 0, bkt_counter = 1, temp = 0;
+	int i = 0;
+	int counter = 0, bkt_counter = 0, temp = Data.find('l'), j = 1;
 	string bkt_Data;
+	string log10;
+	float res;
 
 	Bugs(Data);
+	bkt_Data = Data;
+
+	if (temp != -1)
+	{
+		bkt_Data.clear();
+		while (1)
+		{
+			if (Data[temp + counter] == '(')
+			{
+				bkt_counter++;
+			}
+			else if (Data[temp + counter] == ')')
+			{
+				bkt_counter--;
+			}
+
+			if (Data[temp + counter] == ')' && bkt_counter == 0)
+			{
+				break;
+			}
+			bkt_Data += Data[temp + counter];
+			counter++;
+
+		}
+
+		while (bkt_Data[j] != '(')
+		{
+			log10 += bkt_Data[j];
+			j++;
+		}
+		
+		bkt_Data.erase(0, j + 1);
+
+		bkt_Data.insert(0, " ");
+		i = bkt_Data.length();
+		bkt_Data.insert(i, " ");
+
+		BKT(bkt_Data, Chars, Deg);
+
+		if (atof(bkt_Data.c_str()) <= 0)
+		{
+			cout << "Error Log : b < 0";
+			system("pause");
+			exit(-1);
+		}
+		if (log10.empty())
+		{
+			log10 = "10";
+		}
+		else if (atof(log10.c_str()) <= 0 || atof(log10.c_str()) == 1)
+		{
+			cout << "Error Log : a < 0 or a = 1";
+			system("pause");
+			exit(-1);
+		}
+
+		res = log(atof(bkt_Data.c_str()))/ log(atof(log10.c_str()));
+		log10 = to_string(res);
+		Data.erase(temp, counter + 1);
+		Data.insert(temp, log10);
+		bkt_Data = Data;
+		BKT(bkt_Data, Chars, Deg);
+		Data = bkt_Data;
+	}
+	i = Data.find('(') + 1;
+	temp = 0;
+	counter = 0; 
+	bkt_counter = 1;
 	bkt_Data = Data;
 
 	if (i != 0)
@@ -579,10 +657,10 @@ void Start(string &Data, string &Chars, bool Deg)
 //"-(-144.12/-(12.112*-14) + 11.64235/2) * -60 * -(-3 )="
 int main()
 {
-	string Data = "sin(sin(cos(60)))=", Chars;
+	string Data = "log(log(2))=", Chars;
 	int i = 1;
 	float res = 0.0;
-	bool Deg = true;
+	bool Deg = false;
 
 	//getline(cin, Data);
 	Data = correct(Data);
