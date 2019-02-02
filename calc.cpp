@@ -74,6 +74,7 @@ int Find_Chars(string Chars);										/*
 string correct(string Data)
 {
 	int i = 0;
+	string temp;
 
 	while (Data.find(' ') != -1)
 	{
@@ -135,6 +136,18 @@ string correct(string Data)
 		{
 			Data.erase(i, 3);
 			Data.insert(i, "l");
+		}
+		else if ((Data[i] == (char)'p') and (Data[i + 1] == (char)'i'))
+		{
+			Data.erase(i, 2);
+			temp = to_string(pi);
+			Data.insert(i, temp);
+		}
+		else if ((Data[i] == (char)'e') and (Data[i + 1] == (char)'x') and (Data[i + 2] == (char)'p'))
+		{
+			Data.erase(i, 3);
+			temp = to_string(exp);
+			Data.insert(i, temp);
 		}
 	}
 	
@@ -492,12 +505,40 @@ int BKT(string &Data, string Chars, bool Deg)
 	string bkt_Data;
 	string log10;
 	float res;
+	bool error = true;
 
 	Bugs(Data);
 	bkt_Data = Data;
 
+
+
 	if (temp != -1)
 	{
+		i = 1;
+		while (1)
+		{
+			if (bkt_Data[bkt_Data.find('l') + i] == NULL)
+			{
+				break;
+			}
+			log10 = bkt_Data[bkt_Data.find('l') + i];
+			if (log10[0] == '(')
+			{
+				error = false;
+				break;
+			}
+			i++;
+
+			
+		}
+		log10.clear();
+		if (error)
+		{
+			cout << "Error Log: please, try 'log' with '(...)'"<< endl;
+			system("pause");
+			exit(-1);
+		}
+		i = 0;
 		bkt_Data.clear();
 		while (1)
 		{
@@ -567,7 +608,7 @@ int BKT(string &Data, string Chars, bool Deg)
 	if (i != 0)
 	{
 		bkt_Data.clear();
-		while (1)
+		while (Data[i + counter] != NULL)
 		{
 			if (Data[i + counter] == '(')
 			{
@@ -585,6 +626,11 @@ int BKT(string &Data, string Chars, bool Deg)
 			bkt_Data += Data[i + counter];
 			counter++;
 
+		}
+
+		if (bkt_Data.empty())
+		{
+			bkt_Data = "0";
 		}
 
 		bkt_Data.insert(0, " ");
@@ -657,7 +703,7 @@ void Start(string &Data, string &Chars, bool Deg)
 //"-(-144.12/-(12.112*-14) + 11.64235/2) * -60 * -(-3 )="
 int main()
 {
-	string Data = "log(log(2))=", Chars;
+	string Data = "log(logexp) + (exp * pi)=", Chars;
 	int i = 1;
 	float res = 0.0;
 	bool Deg = false;
